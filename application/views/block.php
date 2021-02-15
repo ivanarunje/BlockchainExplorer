@@ -22,19 +22,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </form>
     </nav>
 
-    <table style="border:2px solid black;">
-        <tr>
-          <th>Height</th>
-          <th>Mined</th>
-          <th>Size</th>
-        </tr>
-    <?php foreach($blocks as $row):?> 
-            <tr>
-                <td><a href="#"><?=$row['height'];?></a></td>
-                <td><?=floor((time()-$row['time'])/60);?>minutes ago&nbsp;&nbsp;</td>
-                <td><?=$row['size'];?>bytes</td>
-            </tr>
-    <?php endforeach;?>
-    </table>
+<?php print_r($blocks)?>
+
   </body>
 </html>

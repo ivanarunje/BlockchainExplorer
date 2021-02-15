@@ -9,7 +9,6 @@ class HomeController extends CI_Controller {
 	{   
         $bitcoin = $this->connect();
         $this->getLatestBlocks($bitcoin);
-        $this->load->view('home');
 	}
 
     public function connect()
@@ -22,18 +21,25 @@ class HomeController extends CI_Controller {
     }
 
     public function getLatestBlocks($bitcoin){
-        $blocks[];
+        $blocks = array();
         for($i = 0; $i < 5; $i++)
         {
             $visina=$bitcoin->getblockcount();
             $hash=$bitcoin->getblockhash($visina - $i);
             $block = $bitcoin->getblock($hash);
-            array_push($block);
-            print_r($block['height']);
-            echo "\n";
+            array_push($blocks, $block);
         }
-        return $blocks;
+        $data['blocks'] = $blocks;
+        $this->load->view('home',$data);
     }
+
+    public function getBlockInfo($height = 0){
+        $height = $this->uri->segment(3);
+        $this->load->helper('url');
+        $data['blocks'] = $height;
+        $this->load->view('block',$data);
+    }
+
 
 
 }
