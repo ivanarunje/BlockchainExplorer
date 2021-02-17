@@ -22,7 +22,82 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </form>
     </nav>
 
-<?php print_r($blocks)?>
+    <div class="container" style="margin-top:50px;">
+      <div class="row">
+        <h4>Block <?php echo $block['height']?></h4>
+        <table class="table table-bordered">
+          <tbody>
+          <tr>
+            <th>Hash</th>
+            <td><?php echo $block['hash']?></td>
+          </tr>
+          <tr>
+            <th>Confirmations</th>
+            <td><?php echo $block['confirmations']?></td>
+          </tr>
+          <tr>
+            <th>Timestamp</th>
+            <td><?php echo date("Y-m-d  G:i", $block['time'])?></td>
+          </tr>
+          <tr>
+            <th>Height</th>
+            <td><?php echo $block['height']?></td>
+          </tr>
+          <tr>
+            <th>Number of Transactions</th>
+            <td><?php echo $block['nTx']?></td>
+          </tr>
+          <tr>
+            <th>Difficulty</th>
+            <td><?php echo $block['difficulty']?></td>
+          </tr>
+          <tr>
+            <th>Merkle root</th>
+            <td><?php echo $block['merkleroot']?></td>
+          </tr>
+          <tr>
+            <th>Version</th>
+            <td><?php echo $block['version']?></td>
+          </tr>
+          <tr>
+            <th>Bits</th>
+            <td><?php echo hexdec($block['bits'])?></td>
+          </tr>
+          <tr>
+            <th>Weight</th>
+            <td><?php echo $block['weight']?></td>
+          </tr>
+          <tr>
+            <th>Size</th>
+            <td><?php echo $block['size']?> bytes</td>
+          </tr>
+          <tr>
+            <th>Nonce</th>
+            <td><?php echo $block['nonce']?></td>
+          </tr>
+          <tr>
+            <th>Block Reward</th>
+            <td></td>
+          </tr>
+          <tr>
+            <th>Fee Reward</th>
+            <td></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row">
+        <h4 style="margin-top:20px;">Block transactions</h4>
+      </div>
+        <?php foreach($block['tx'] as $transaction):?> 
+        <div class="jumbotron">
+            <p>Hash: <?=$transaction['txid'];?></p>
+            <p>From: <?=$transaction['vout'][0]['value'];?></p>
+        </div>
+        <?php endforeach;?>
+
+    </div>
 
   </body>
 </html>
