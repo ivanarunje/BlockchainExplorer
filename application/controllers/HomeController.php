@@ -56,45 +56,51 @@ class HomeController extends CI_Controller {
         $hash = $this->uri->segment(3);
         $bitcoin = $this->connect();
         $block = $bitcoin->getblock($hash,2);
-        $vout_complete_array = array();
-        $vin_complete_array = array();
-        //$previous_addresses_array = array();
+        $complete_info = array();
 
-        foreach($block['tx'] as $trans)
-        {
-            $vout_array = array();
-            $vin_array = array();
-            //$previous_addresses = array();
+
+        foreach($block['tx'] as $transaction){ //kroz transakcije
+            $trans_vout = array();
+            $trans_vin = array();
+            $trans_union = array();
 
             if($count++ == 0)
             {
-                continue;
+                $address = "COINBASE";
+                $trans_vin[$address] = 0;
             }
-
-            foreach($trans['vin'] as $vin)
+            else
             {
-                $previous = $bitcoin->getrawtransaction($vin['txid'], true);
-                $vout = $previous['vout'][0];
-/*                 $scriptPubKey = $vout['scriptPubKey'];
-                foreach($scriptPubKey['addresses'] as $current_addr)
+                $previous_trans = $this->getInputofTransaction($transaction, $bitcoin);
+                foreach($previous_trans as $current)
                 {
-                    array_push($previous_addresses, $current_addr);
-                } */
-                array_push($vin_array, $vout['value']);
+                    $address = $current['scriptPubKey']['addresses'][0];
+                    $trans_vin[$address] = $current['value'];
+                }
             }
+            array_push($trans_union, $trans_vin);
 
-            foreach($trans['vout'] as $vout)
-            {
-                array_push($vout_array, $vout['value']);
+            for($i=0;$i<count($transaction['vout']);$i++)
+            {    
+                // Ako key addresses ne postoji ili ako u asm pise OP_RETURN odma upisat prazan string
+                if(strstr($transaction['vout'][$i]['scriptPubKey']['asm'], "OP_RETURN"))
+                {
+                    $address = "OP_RETURN";
+                }
+                else if(array_key_exists('addresses', $transaction['vout'][$i]['scriptPubKey']) == false)
+                {
+                    $address = "";
+                }
+                else
+                {
+                    $address = $transaction['vout'][$i]['scriptPubKey']['addresses'][0];
+                }
+                $trans_vout[$address] = $transaction['vout'][$i]['value'];
             }
-            $vout_complete_array[$trans['txid']] = $vout_array;
-            $vin_complete_array[$trans['txid']] = $vin_array;
-            //$previous_addresses_array[$trans['txid']] = $previous_addresses;
+            array_push($trans_union, $trans_vout);
+            $complete_info[$transaction['txid']] = $trans_union;
         }
-
-        $data['vout_complete_array'] = $vout_complete_array;
-        $data['vin_complete_array'] = $vin_complete_array;
-        //$data['previous_addresses_array'] = $previous_addresses_array;
+        $data['complete_info'] = $complete_info;
         $data['block'] = $block;
         $this->load->view('block', $data);
     }

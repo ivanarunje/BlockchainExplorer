@@ -57,7 +57,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           </tr>
           <tr>
             <th>Version</th>
-            <td><?php echo $block['version']?></td>
+            <td><?php echo "0x".dechex($block['version'])?></td>
           </tr>
           <tr>
             <th>Bits</th>
@@ -90,14 +90,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
       <div class="row">
         <h4 style="margin-top:20px;">Block transactions</h4>
       </div>
-        <?php foreach($block['tx'] as $transaction):?> 
+        <?php foreach($complete_info as $txid => $txdata):?> 
         <div class="jumbotron">
-            <p>Hash: <?=$transaction['txid'];?></p>
-            <p>From: <?=$transaction['vout'][0]['value'];?></p>
+            <p>Hash: <?=$txid;?></p>
+            <p>From:<?php
+            $sum_in = 0;
+            foreach($txdata[0] as $address => $value)
+            {
+              $sum_in+=$value;
+
+              echo $address."</br>";
+              if($address != "COINBASE")
+              {
+                echo $value . " BTC"."</br>";
+              }
+            }?></p>
+            <p>To: <?php
+            $sum_out = 0;
+            foreach($txdata[1] as $address2 => $value)
+            {
+              $sum_out+=$value;
+
+              echo $address2."</br>";
+              echo $value . " BTC"."</br>";
+            }?>
+            </p>
+            <p>Fee:<?php if($address != "COINBASE")
+              {
+                echo ($sum_in - $sum_out);
+              }else{
+                echo 0;
+              }?></p>
+            <p>Amount:<?php echo $sum_out;?></p>
         </div>
         <?php endforeach;?>
-
     </div>
-
+    <?php print_r($complete_info); ?>
   </body>
 </html>
