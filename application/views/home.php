@@ -63,10 +63,10 @@ $this->load->helper('url');
           <tbody>
             <?php foreach($transactions as $key => $row):?> 
               <tr>
-                  <td><a href="#" style="color:#00ccff"><?=$key;?></a></td>
+                  <td><a href="<?php echo base_url();?>index.php/HomeController/getTransactionInfo/<?=$key;?>" style="color:#00ccff"><?=$key;?></a></td>
                   <td><?=date("G:i",$row['time']);?></td>
                   <td><?=$row['size'];?> bytes</td>
-                  <td><?=$row['fee'];?></td>
+                  <td><?=number_format($row['fee'],8);?></td>
               </tr>
             <?php endforeach;?>
           </tbody>

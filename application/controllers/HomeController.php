@@ -4,6 +4,7 @@ require_once(APPPATH. 'libraries/easybitcoin.php');
 
 class HomeController extends CI_Controller {
 
+
 	public function index()
 	{   
         $bitcoin = $this->connect();
@@ -50,13 +51,112 @@ class HomeController extends CI_Controller {
 
     public function getBlockInfo($hash = 0){
         $this->load->helper('url');
+        $count=0;
+        $transaction_data = array();
         $hash = $this->uri->segment(3);
         $bitcoin = $this->connect();
-        $block = $bitcoin->getblock($hash, 2); 
+        $block = $bitcoin->getblock($hash,2);
+        $vout_complete_array = array();
+        $vin_complete_array = array();
+        //$previous_addresses_array = array();
 
+        foreach($block['tx'] as $trans)
+        {
+            $vout_array = array();
+            $vin_array = array();
+            //$previous_addresses = array();
+
+            if($count++ == 0)
+            {
+                continue;
+            }
+
+            foreach($trans['vin'] as $vin)
+            {
+                $previous = $bitcoin->getrawtransaction($vin['txid'], true);
+                $vout = $previous['vout'][0];
+/*                 $scriptPubKey = $vout['scriptPubKey'];
+                foreach($scriptPubKey['addresses'] as $current_addr)
+                {
+                    array_push($previous_addresses, $current_addr);
+                } */
+                array_push($vin_array, $vout['value']);
+            }
+
+            foreach($trans['vout'] as $vout)
+            {
+                array_push($vout_array, $vout['value']);
+            }
+            $vout_complete_array[$trans['txid']] = $vout_array;
+            $vin_complete_array[$trans['txid']] = $vin_array;
+            //$previous_addresses_array[$trans['txid']] = $previous_addresses;
+        }
+
+        $data['vout_complete_array'] = $vout_complete_array;
+        $data['vin_complete_array'] = $vin_complete_array;
+        //$data['previous_addresses_array'] = $previous_addresses_array;
         $data['block'] = $block;
         $this->load->view('block', $data);
     }
 
+
+    public function getTransactionInfo($hash=0){
+        $this->load->helper('url');
+        $hash = $this->uri->segment(3);
+        $bitcoin = $this->connect();
+        $transaction = $bitcoin->getrawtransaction($hash,true);
+
+        if (array_key_exists('blockhash', $transaction)==false) {
+            $transaction["confirmations"] = "0";
+            $transaction["status"] = "Unconfirmed";
+            $transaction["blockhash"] ="Mempool";
+        }
+        else{
+            $transaction["status"] = "Confirmed";
+            $blockHeight=array();
+            $blockHeight=$bitcoin->getblock($transaction['blockhash']); //razlog: na primjeru explorer-a prikazana visina a ne hash 
+            $transaction["blockhash"]=$blockHeight['height'];
+        }
+        $voutTotal=0;
+        foreach($transaction['vout'] as $output){
+            $voutTotal+=$output['value'];
+        }
+        $input=$this->getInputofTransaction($transaction,$bitcoin);
+        $transaction['prev_output']=$input;
+
+        $vinTotal=0;
+        foreach($input as $currentVin){
+            $vinTotal+=$currentVin['value'];
+        }
+
+        $transaction['totalOutput']=$voutTotal;
+        $transaction['totalInput']=$vinTotal;
+        $transaction['fee']=$vinTotal-$voutTotal;
+
+        $data['transaction'] = $transaction;
+        $this->load->view('transaction', $data);
+    }
+
+    public function getInputofTransaction($transaction, $bitcoin){
+        $txid=array();
+        $transakcija_temp=array();
+        $vout_prev_transaction=array();
+        //dohvaćam txid i vout iz vin polja trenutne transakcije
+        foreach($transaction['vin'] as $vin){
+            $txid[$vin['txid']]=$vin['vout'];
+        }
+        //pozivam getrawtransaction za svaki id
+        //dohvaćam njihove izlaze
+        foreach ($txid as $id=>$value){
+            $transakcija_temp=$bitcoin->getrawtransaction($id, true);
+            for($i=0;$i<count($transakcija_temp['vout']);$i++){
+                if($i == $value)
+                {
+                    array_push($vout_prev_transaction, $transakcija_temp['vout'][$i]);
+                }
+            }
+        }
+        return $vout_prev_transaction;
+    }
 }
 ?>
