@@ -1,0 +1,110 @@
+
+.header {
+  background: #355c7d;  
+  background:
+    linear-gradient(
+      rgba(53, 92, 125, 0.8), /* #355c7d */
+      rgba(108, 91, 123, 0.8), /* #6c5b7b */
+      rgba(192, 108, 123, 0.8) /* #c06c7b */
+    ),
+    url('https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-green-blockchain-bitcoin-fintech-banner-image_196943.jpg') no-repeat left top;
+  background-size: cover;  
+  z-index: 0;
+}
+.header .caption {
+	z-index: 5; 
+  text-align: center;
+  color: #fff;
+}
+.header .caption .title {
+	margin-bottom: 1.5rem;
+}
+.header .caption .text {
+	margin-bottom: 1.5rem;
+}
+.header .caption .action {
+  display: flex;
+  margin-bottom: 1rem;
+  margin-left: 15%;
+  width: 70%;
+}
+
+@media (min-width: 992px) {
+    .header .caption .action {
+    margin-left: 10%;
+    width: 80%;
+    }
+    .header {
+    position: relative;
+    width: 100vw;	
+    height: 400px;	
+    }
+    .header .center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        transform:translate(-50%,-50%);
+        z-index: 5; 
+    padding: 1rem;
+    }
+    .header .left {
+    position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        transform:translate(-50%,-50%);
+        z-index: 5; 
+    padding: 1rem;
+    }
+    .header .right {
+    position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        transform:translate(-50%,-50%);
+        z-index: 5; 
+    padding: 1rem;
+    }
+
+    @media (min-width: 992px) {
+    .header .center {
+    width: 50%;
+    }
+    .header .left {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 40%;
+    height: 60%;
+    transform:translate(0, 0);
+    padding: 1rem;
+    }
+    .header .right {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 40%;
+    height: 60%;
+    transform:translate(0, 0);
+    padding: 1rem;
+    }
+  }
+}
+
+body
+{
+  background-color: #c7b3b74f;
+}
+#block_table, #transactions_table, #transaction_detail_table, #block_detail_table
+{
+  background-color:white;
+  font-size:16px;
+}
+.title a{
+  color:white !important;
+}
+.title a:hover{
+  text-decoration:none;
+  color:yellow !important;
+}

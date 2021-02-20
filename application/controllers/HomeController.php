@@ -45,21 +45,27 @@ class HomeController extends CI_Controller {
             $array_trans[$current] = $transaction;
             $count++;
         }
+        echo "Before sort: "; print_r($array_trans);
         array_multisort(array_column($array_trans, 'time'), SORT_DESC, $array_trans);
         return array_slice($array_trans, 0, 8);
     }
 
-    public function getBlockInfo($hash = 0){
+    public function getBlockInfo($hash){
         $this->load->helper('url');
         $count=0;
         $transaction_data = array();
-        $hash = $this->uri->segment(3);
+        if(empty($hash))
+        {
+            $hash = $this->uri->segment(3);
+        }
         $bitcoin = $this->connect();
         $block = $bitcoin->getblock($hash,2);
         $complete_info = array();
-
+        $total_fee = 0;
 
         foreach($block['tx'] as $transaction){ //kroz transakcije
+            $fee_curent = 0;
+            $flag = false;
             $trans_vout = array();
             $trans_vin = array();
             $trans_union = array();
@@ -67,15 +73,20 @@ class HomeController extends CI_Controller {
             if($count++ == 0)
             {
                 $address = "COINBASE";
-                $trans_vin[$address] = 0;
+                $flag = true;
+                $temp_array = array("COINBASE" => 0);
+                array_push($trans_vin, $temp_array);
             }
             else
             {
                 $previous_trans = $this->getInputofTransaction($transaction, $bitcoin);
                 foreach($previous_trans as $current)
                 {
+                    
                     $address = $current['scriptPubKey']['addresses'][0];
-                    $trans_vin[$address] = $current['value'];
+                    $temp_array = array($address => $current['value']);
+                    $fee_curent += $current['value'];
+                    array_push($trans_vin, $temp_array);
                 }
             }
             array_push($trans_union, $trans_vin);
@@ -95,20 +106,32 @@ class HomeController extends CI_Controller {
                 {
                     $address = $transaction['vout'][$i]['scriptPubKey']['addresses'][0];
                 }
-                $trans_vout[$address] = $transaction['vout'][$i]['value'];
+                $temp_array = array($address => $transaction['vout'][$i]['value']);
+                if($flag == false)
+                {
+                    $fee_curent -= $transaction['vout'][$i]['value'];
+                }
+
+                array_push($trans_vout, $temp_array);
             }
+            $total_fee += $fee_curent;
             array_push($trans_union, $trans_vout);
             $complete_info[$transaction['txid']] = $trans_union;
         }
         $data['complete_info'] = $complete_info;
+        $data['total_fee'] = $total_fee;
         $data['block'] = $block;
         $this->load->view('block', $data);
     }
 
 
-    public function getTransactionInfo($hash=0){
+    public function getTransactionInfo($hash){
         $this->load->helper('url');
-        $hash = $this->uri->segment(3);
+        if(empty($hash))
+        {
+            $hash = $this->uri->segment(3);
+        }
+
         $bitcoin = $this->connect();
         $transaction = $bitcoin->getrawtransaction($hash,true);
 
@@ -163,6 +186,27 @@ class HomeController extends CI_Controller {
             }
         }
         return $vout_prev_transaction;
+    }
+    public function searchFunction(){
+        $input=$this->input->post('inputValue');
+        $bitcoin = $this->connect();
+        $block= $bitcoin->getblock($input);
+        if(empty($block)){
+            $transaction =  $bitcoin->getrawtransaction($input,true);
+            if(empty($transaction)){
+                // otvoriti view 404
+            }
+            else
+            {
+                // Type: Transaction
+                $this->getTransactionInfo($transaction['txid']);
+            }
+        }
+        else
+        {
+            // Type: block
+            $this->getBlockInfo($input);
+        }
     }
 }
 ?>
