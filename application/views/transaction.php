@@ -79,29 +79,37 @@ $this->view('header');
         </tr>
         <tr>
           <th scope="row">Pkscript</th>
-          <td><?php echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>", $transaction['prev_output'][$i]['scriptPubKey']['asm']))?></td>
+          <td>
+            <?php
+              echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>", $transaction['prev_output'][$i]['scriptPubKey']['asm']));
+            ?>
+          </td>
         </tr>
         <tr>
           <th scope="row">Sigscript</th>
           <td><?php echo str_replace("[ALL]","01",$transaction['vin'][$i]['scriptSig']['asm'])?></td>
         </tr>
         <tr>
-          <th scope="row">Witness</th>
-          <td></td>
+          <th style="width: 10%" scope="row">Witness</th>
+          <td><?php foreach($transaction['vin'][$i]['txinwitness'] as $witness)
+          {
+            echo $witness."</br>";
+          }       
+          ?></td>
         </tr>
       </tbody>
     </table>
   </div>
   <?php }?>
 
-  <h4 style="margin-top:50px;"><i class="fa fa-angle-double-left"></i> OUTPUTS</h4>
+  <h4 class="text-right" style="margin-top:50px;">OUTPUTS <i class="fa fa-angle-double-right"></i></h4>
   <?php $i=0; ?>
   <?php foreach($transaction['vout'] as $output): ?>
   <div id="div_detail_Table2">
     <table id="block_trans_table" class="table table-sm table-borderless">
       <tbody>
         <tr>
-          <th scope="row">Index</th>
+          <th style="width: 10%" scope="row">Index</th>
           <td><?php echo $i?></td>
         </tr>
         <tr>
@@ -124,7 +132,16 @@ $this->view('header');
         </tr>
         <tr>
           <th scope="row">Pkscript</th>
-          <td><?php echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>",$output['scriptPubKey']['asm']));?></td>
+          <td>
+              <?php
+              $firstWord=strtok($output['scriptPubKey']['asm']," ");
+              if($firstWord=="0"){
+                echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>", $output['scriptPubKey']['asm']));
+              }else{
+                echo str_replace(" ","</br>", $output['scriptPubKey']['asm']);
+              }
+              ?>
+          </td>
         </tr>
       </tbody>
     </table>

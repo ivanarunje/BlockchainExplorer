@@ -87,14 +87,10 @@ $fee_roward_total = 0;
                   echo $address."</br>";
                   if($address != "COINBASE")
                   {
-                    echo number_format($value, 8) . "</br>";
-                  }
-                  else
-                  {
-                    echo "0.00000000";
+                    echo number_format($value, 8) . "BTC</br>";
                   }
                 }
-              }?> BTC</td>
+              }?></td>
         </tr>
         <tr>
           <th scope="row">To</th>
@@ -106,9 +102,9 @@ $fee_roward_total = 0;
                 {
                   $sum_out+=$value;
                   echo $address2."</br>";
-                  echo number_format($value, 8) ."</br>";
+                  echo number_format($value, 8) ." BTC</br>";
                 }
-              }?> BTC
+              }?>
           </td>
         </tr>
         <tr>
@@ -116,7 +112,7 @@ $fee_roward_total = 0;
           <td><?php if($address != "COINBASE")
               {
                 $fee = number_format(($sum_in - $sum_out), 8);
-                echo $fee;
+                echo $fee ." BTC";
                 $fee_roward_total += $fee;
               }else{
                 echo "0.00000000 BTC";
@@ -126,7 +122,7 @@ $fee_roward_total = 0;
         </tr>
         <tr>
           <th scope="row">Amount</th>
-          <td class="btn btn-success float-right"><?php echo $sum_out;?> BTC</td>
+          <td class="btn btn-success float-right"><?php echo number_format($sum_out,8);?> BTC</td>
         </tr>
       </tbody>
     </table>

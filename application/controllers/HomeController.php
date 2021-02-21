@@ -45,7 +45,6 @@ class HomeController extends CI_Controller {
             $array_trans[$current] = $transaction;
             $count++;
         }
-        echo "Before sort: "; print_r($array_trans);
         array_multisort(array_column($array_trans, 'time'), SORT_DESC, $array_trans);
         return array_slice($array_trans, 0, 8);
     }
@@ -187,7 +186,7 @@ class HomeController extends CI_Controller {
         }
         return $vout_prev_transaction;
     }
-    
+
     public function searchFunction(){
         $input=$this->input->post('inputValue');
         $bitcoin = $this->connect();

@@ -108,14 +108,13 @@ body
   text-decoration:none;
   color:yellow !important;
 }
-#block_trans_table{
-  word-break: break-word;
-}
+
 #div_block_trans_Table{
   background-color:white; 
   padding:20px;
   margin-bottom:20px;
   border:2px solid #71e3b9;
+  min-width: 500px;
 }
 
 #transaction_table{
