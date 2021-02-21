@@ -187,24 +187,31 @@ class HomeController extends CI_Controller {
         }
         return $vout_prev_transaction;
     }
+    
     public function searchFunction(){
         $input=$this->input->post('inputValue');
         $bitcoin = $this->connect();
         $block= $bitcoin->getblock($input);
+
+        //ako nije unesen text u input da se osvježi stranica
+        if(empty($input)){
+            $this->index();
+        }
+
         if(empty($block)){
             $transaction =  $bitcoin->getrawtransaction($input,true);
             if(empty($transaction)){
-                // otvoriti view 404
+                $this->load->view('errors/html/custom_error');
             }
             else
             {
-                // Type: Transaction
+                // view: Transaction
                 $this->getTransactionInfo($transaction['txid']);
             }
         }
         else
         {
-            // Type: block
+            // view: block
             $this->getBlockInfo($input);
         }
     }

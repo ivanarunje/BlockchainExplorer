@@ -59,30 +59,54 @@ $this->view('header');
       </tbody>
     </table>
   </div>
-    <div class="row">
-        <h4 style="margin-top:20px;">INPUTS</h4>
-    </div>
-    <div class="jumbotron">
-    <?php for($i=0; $i<count($transaction['vin']);$i++){ ?>
-        <div>
-            <p>Index: <?php echo $i?></p>
-            <p>Address: <?php echo $transaction['prev_output'][$i]['scriptPubKey']['addresses'][0]?></p>
-            <p>Value: <?php echo $transaction['prev_output'][$i]['value']?> BTC</p>
-            <p>Pkscript: <?php echo $transaction['prev_output'][$i]['scriptPubKey']['asm']?></p>
-            <p>Sigscript:<?php echo str_replace("[ALL]","01",$transaction['vin'][$i]['scriptSig']['asm'])?></p>
-        </div>
-        <hr>
-        <?php }?>
-    </div>
-    <div class="row">
-        <h4 style="margin-top:20px;">OUTPUTS</h4>
-    </div>
-    <div class="jumbotron">
-    <?php $i=0; ?>
-    <?php foreach($transaction['vout'] as $output): ?>
-        <div>
-            <p>Index: <?php echo $i?></p>
-            <p>Address: <?php 
+
+  <h4 style="margin-top:50px;"><i class="fa fa-angle-double-right"></i> INPUTS</h4>
+  <?php for($i=0; $i<count($transaction['vin']);$i++){ ?> 
+  <div id="div_detail_Table">
+    <table id="detail_table" class="table table-sm table-borderless">
+      <tbody>
+        <tr>
+          <th scope="row">Index</th>
+          <td><?php echo $i?></td>
+        </tr>
+        <tr>
+          <th scope="row">Address</th>
+          <td><?php echo $transaction['prev_output'][$i]['scriptPubKey']['addresses'][0]?></td>
+        </tr>
+        <tr>
+          <th scope="row">Value</th>
+          <td><?php echo number_format($transaction['prev_output'][$i]['value'], 8); ?></td>
+        </tr>
+        <tr>
+          <th scope="row">Pkscript</th>
+          <td><?php echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>", $transaction['prev_output'][$i]['scriptPubKey']['asm']))?></td>
+        </tr>
+        <tr>
+          <th scope="row">Sigscript</th>
+          <td><?php echo str_replace("[ALL]","01",$transaction['vin'][$i]['scriptSig']['asm'])?></td>
+        </tr>
+        <tr>
+          <th scope="row">Witness</th>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <?php }?>
+
+  <h4 style="margin-top:50px;"><i class="fa fa-angle-double-left"></i> OUTPUTS</h4>
+  <?php $i=0; ?>
+  <?php foreach($transaction['vout'] as $output): ?>
+  <div id="div_detail_Table2">
+    <table id="block_trans_table" class="table table-sm table-borderless">
+      <tbody>
+        <tr>
+          <th scope="row">Index</th>
+          <td><?php echo $i?></td>
+        </tr>
+        <tr>
+          <th scope="row">Address</th>
+          <td><?php 
                 $scriptPubkey = $output['scriptPubKey'];
                 if(array_key_exists('addresses', $scriptPubkey) == true)
                 {
@@ -91,14 +115,23 @@ $this->view('header');
                 else
                 { 
                     echo "";
-                }?></p>
-            <p>Value: <?php echo $output['value']?> BTC</p>
-            <p>Pkscript: <?php echo $output['scriptPubKey']['asm']?></p>
-        </div>
-        <?php $i++; ?>
-        <hr>
-    <?php endforeach; ?>
-    </div>
+                }?>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Value</th>
+          <td><?php echo number_format($output['value'],8);?> BTC</td>
+        </tr>
+        <tr>
+          <th scope="row">Pkscript</th>
+          <td><?php echo str_replace("0</br>","OP_0</br>",str_replace(" ","</br>",$output['scriptPubKey']['asm']));?></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <?php $i++; ?>
+  <?php endforeach; ?>
+
 </div>
 
 </body>

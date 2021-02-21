@@ -7,7 +7,7 @@ $this->view('header');
 <!-- TABLES for latest blocks and transactions -->
 <div class="container" style="margin-top:50px;">
   <div class="row text-center">
-    <h3>Latest Blocks</h3>
+    <h4>Latest Blocks</h4>
     <table class="table table-hover" id="block_table">
       <thead>
       <tr>
@@ -27,8 +27,8 @@ $this->view('header');
       </tbody>
     </table>
   </div>
-  <div class="row text-center" id="transaction_table" style="margin-top:50px; margin-bottom:50px;">
-    <h3>Latest Transactions</h3>
+  <div class="row text-center" id="transaction_table" style="margin-top:30px; margin-bottom:50px;">
+    <h4>Latest Transactions</h4>
     <table class="table table-hover" id="transactions_table">
       <thead>
       <tr>

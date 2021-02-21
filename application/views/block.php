@@ -64,54 +64,74 @@ $fee_roward_total = 0;
       </tbody>
     </table>
   </div>
-  <div class="row">
-    <h4 style="margin-top:20px;">Block transactions</h4>
+
+  
+  <h4 class="text-center" style="margin-top:50px;">BLOCK TRANSACTIONS</h4>
+  <?php foreach($complete_info as $txid => $txdata):?> 
+  <div id="div_block_trans_Table">
+    <table id="block_trans_table" class="table table-sm table-borderless">
+      <tbody>
+        <tr>
+          <th scope="row">Hash</th>
+          <td><?=$txid;?></td>
+        </tr>
+        <tr>
+          <th scope="row">From</th>
+          <td><?php
+              $sum_in = 0;
+              foreach ($txdata[0] as $data)
+              {
+                foreach($data as $address => $value)
+                {
+                  $sum_in+=$value;
+                  echo $address."</br>";
+                  if($address != "COINBASE")
+                  {
+                    echo number_format($value, 8) . "</br>";
+                  }
+                  else
+                  {
+                    echo "0.00000000";
+                  }
+                }
+              }?> BTC</td>
+        </tr>
+        <tr>
+          <th scope="row">To</th>
+          <td><?php
+                $sum_out = 0;
+                foreach ($txdata[1] as $data)
+                {
+                foreach($data as $address2 => $value)
+                {
+                  $sum_out+=$value;
+                  echo $address2."</br>";
+                  echo number_format($value, 8) ."</br>";
+                }
+              }?> BTC
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Fee</th>
+          <td><?php if($address != "COINBASE")
+              {
+                $fee = number_format(($sum_in - $sum_out), 8);
+                echo $fee;
+                $fee_roward_total += $fee;
+              }else{
+                echo "0.00000000 BTC";
+              }
+            ?>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Amount</th>
+          <td class="btn btn-success float-right"><?php echo $sum_out;?> BTC</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-    <?php foreach($complete_info as $txid => $txdata):?> 
-    <div class="jumbotron">
-        <p>Hash: <?=$txid;?></p>
-        <p>From:<?php
-        $sum_in = 0;
-        foreach ($txdata[0] as $data)
-        {
-        foreach($data as $address => $value)
-        {
-          $sum_in+=$value;
-          echo $address."</br>";
-          if($address != "COINBASE")
-          {
-            echo number_format($value, 8) . " BTC"."</br>";
-          }
-          else
-          {
-            echo "0.00000000 BTC";
-          }
-        }
-      }?></p>
-        <p>To: <?php
-        $sum_out = 0;
-        foreach ($txdata[1] as $data)
-        {
-        foreach($data as $address2 => $value)
-        {
-          $sum_out+=$value;
-          echo $address2."</br>";
-          echo number_format($value, 8) . " BTC"."</br>";
-        }
-      }?>
-        </p>
-        <p>Fee:<?php if($address != "COINBASE")
-          {
-            $fee = number_format(($sum_in - $sum_out), 8);
-            echo $fee;
-            $fee_roward_total += $fee;
-          }else{
-            echo "0.00000000 BTC";
-          }
-        ?></p>
-        <p>Amount:<?php echo $sum_out;?></p>
-    </div>
-    <?php endforeach;?>
+  <?php endforeach;?>
 </div>
 
 </body>
