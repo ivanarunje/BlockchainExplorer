@@ -92,7 +92,6 @@ class HomeController extends CI_Controller {
 
             for($i=0;$i<count($transaction['vout']);$i++)
             {    
-                // Ako key addresses ne postoji ili ako u asm pise OP_RETURN odma upisat prazan string
                 if(strstr($transaction['vout'][$i]['scriptPubKey']['asm'], "OP_RETURN"))
                 {
                     $address = "OP_RETURN";
@@ -192,7 +191,6 @@ class HomeController extends CI_Controller {
         $bitcoin = $this->connect();
         $block= $bitcoin->getblock($input);
 
-        //ako nije unesen text u input da se osvježi stranica
         if(empty($input)){
             $this->index();
         }
